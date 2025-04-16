@@ -11,6 +11,10 @@ ARG HOME=/root
 
 # 0. Install general tools
 ARG DEBIAN_FRONTEND=noninteractive
+
+# 加快 apt 下载速度
+RUN sed -i 's|http://.*.ubuntu.com|http://mirrors.ustc.edu.cn|g' /etc/apt/sources.list
+
 RUN apt-get update && \
     apt-get install -y \
         curl \
@@ -80,6 +84,10 @@ RUN rustup target add riscv64gc-unknown-none-elf && \
     cargo install cargo-binutils --vers ~0.2 && \
     rustup component add rust-src && \
     rustup component add llvm-tools-preview
+# 在 Dockerfile 里添加这段
+RUN rustup install nightly-2024-05-02 && \
+    rustup default nightly-2024-05-02 && \
+    rustup component add rust-src llvm-tools-preview clippy
 
 # Ready to go
 WORKDIR ${HOME}
